@@ -12,6 +12,7 @@ clone:
 steps:
   - name: build-and-push
     image: woodpeckerci/plugin-docker-buildx
+    privileged: true
     settings:
       registry: git.cvsickle.com
       username: cvsickle

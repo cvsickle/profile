@@ -47,6 +47,9 @@ steps:
         from_secret: github_token
     commands:
       - set -e
+      # debug: confirm the token secret is actually populated, without printing it
+      - echo "GITHUB_TOKEN length is ${#GITHUB_TOKEN}"
+      - test -n "$GITHUB_TOKEN" || { echo "GITHUB_TOKEN is empty - check the github_token secret exists and is assigned to this repo"; exit 1; }
       # the clone step's GitHub credentials don't carry over to this container,
       # so re-authenticate the origin remote before fetching from it
       - git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${CI_REPO_OWNER}/${CI_REPO_NAME}.git"

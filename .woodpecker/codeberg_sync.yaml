@@ -1,0 +1,65 @@
+# Sync this repository to a Codeberg mirror
+when:
+  - event: push
+    branch: '*'
+  - event: manual
+  - event: cron
+    cron: "25 */6 * * *"
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git
+    settings:
+      depth: 0
+      tags: true
+
+steps:
+  - name: preflight-check
+    image: alpine:3.20
+    environment:
+      CODEBERG_BASE_URL:
+        from_secret: CODEBERG_BASE_URL
+      CODEBERG_REPO:
+        from_secret: CODEBERG_REPO
+      CODEBERG_USERNAME:
+        from_secret: CODEBERG_USERNAME
+      CODEBERG_TOKEN:
+        from_secret: CODEBERG_TOKEN
+    commands:
+      - set -e
+      - echo "Running preflight checks..."
+      - test -n "$CODEBERG_BASE_URL" || { echo "Missing CODEBERG_BASE_URL"; exit 1; }
+      - test -n "$CODEBERG_REPO" || { echo "Missing CODEBERG_REPO"; exit 1; }
+      - test -n "$CODEBERG_USERNAME" || { echo "Missing CODEBERG_USERNAME"; exit 1; }
+      - test -n "$CODEBERG_TOKEN" || { echo "Missing CODEBERG_TOKEN"; exit 1; }
+      - case "$CODEBERG_BASE_URL" in
+          http://*|https://*) ;;
+          *) echo "CODEBERG_BASE_URL must start with http:// or https://"; exit 1 ;;
+        esac
+      - case "$CODEBERG_REPO" in
+          */*) ;;
+          *) echo "CODEBERG_REPO must look like owner/repo"; exit 1 ;;
+        esac
+      - echo "Preflight checks passed."
+
+  - name: sync-to-codeberg
+    image: alpine/git
+    environment:
+      CODEBERG_BASE_URL:
+        from_secret: CODEBERG_BASE_URL
+      CODEBERG_REPO:
+        from_secret: CODEBERG_REPO
+      CODEBERG_USERNAME:
+        from_secret: CODEBERG_USERNAME
+      CODEBERG_TOKEN:
+        from_secret: CODEBERG_TOKEN
+    commands:
+      - set -e
+      # make sure we fetch every branch and tag, not just the one that triggered the build
+      - git fetch origin '+refs/heads/*:refs/remotes/origin/*'
+      - git fetch origin '+refs/tags/*:refs/tags/*'
+      # normalize the base URL and build the push URL with embedded credentials
+      - BASE_URL="${CODEBERG_BASE_URL%/}"
+      - HOST="${BASE_URL#http://}"
+      - HOST="${HOST#https://}"
+      - git push --mirror "https://${CODEBERG_USERNAME}:${CODEBERG_TOKEN}@${HOST}/${CODEBERG_REPO}.git"

@@ -21,3 +21,4 @@ steps:
         from_secret: forgejo_config_json
       dockerfile: Dockerfile
       context: .
+      log-level: debug

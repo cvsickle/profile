@@ -21,9 +21,9 @@ steps:
       CODEBERG_REPO: "profile"
       CODEBERG_USERNAME: "cvsickle"
       CODEBERG_TOKEN:
-        from_secret: codeberg_token
+        from_secret: CODEBERG_TOKEN
       GITHUB_PULL_TOKEN:
-        from_secret: github_pull_token
+        from_secret: GITHUB_PULL_TOKEN
     commands:
       - set -e
       - echo "CODEBERG_TOKEN length is ${#CODEBERG_TOKEN}"
@@ -47,9 +47,9 @@ steps:
       CODEBERG_REPO: "profile"
       CODEBERG_USERNAME: "cvsickle"
       CODEBERG_TOKEN:
-        from_secret: codeberg_token
+        from_secret: CODEBERG_TOKEN
       GITHUB_PULL_TOKEN:
-        from_secret: github_pull_token
+        from_secret: GITHUB_PULL_TOKEN
     commands:
       - set -e
       # debug: confirm the token secrets are actually populated, without printing it

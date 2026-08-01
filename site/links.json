@@ -1,0 +1,34 @@
+{
+  "name": "Corey Van Sickle",
+  "tagline": "Engineer | Homelabber | Wannabe Developer | DevOps Enthusiast | Standard Nerd",
+  "links": [
+    {
+      "id": "github",
+      "label": "GitHub",
+      "url": "https://github.com/cvsickle",
+      "icon": "github",
+      "color": "#f5c2e7"
+    },
+    {
+      "id": "codeberg",
+      "label": "Codeberg",
+      "url": "https://codeberg.org/cvsickle",
+      "icon": "codeberg",
+      "color": "#a6e3a1"
+    },
+    {
+      "id": "forgejo",
+      "label": "Forgejo",
+      "url": "https://git.cvsickle.com/cvsickle",
+      "icon": "forgejo",
+      "color": "#fab387"
+    },
+    {
+      "id": "email",
+      "label": "Email",
+      "url": "mailto:vansicklecorey@gmail.com",
+      "icon": "email",
+      "color": "#89b4fa"
+    }
+  ]
+}

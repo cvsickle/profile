@@ -1,0 +1,6 @@
+services:
+  profile:
+    build: .
+    container_name: profile
+    ports:
+      - 8080:8080

@@ -26,17 +26,24 @@ steps:
         from_secret: github_pull_token
     commands:
       - set -e
-      - echo "CODEBERG_TOKEN length is $${#CODEBERG_TOKEN}"
-      - echo "GITHUB_PULL_TOKEN length is $${#GITHUB_PULL_TOKEN}"
+      # NOTE: ${...} in commands is preprocessed by Woodpecker itself before the
+      # shell runs, so any brace expression meant to be evaluated at runtime
+      # (secrets, string manipulation, etc.) must be escaped with $$.
+      - echo "Provided values..."
+      - echo " CODEBERG_BASE_URL is $${CODEBERG_BASE_URL}"
+      - echo " CODEBERG_REPO is $${CODEBERG_REPO}"
+      - echo " CODEBERG_USERNAME is $${CODEBERG_USERNAME}"
+      - echo " CODEBERG_TOKEN length is $${#CODEBERG_TOKEN}"
+      - echo " GITHUB_PULL_TOKEN length is $${#GITHUB_PULL_TOKEN}"
       - echo "Running preflight checks..."
-      - test -n "$CODEBERG_BASE_URL" || { echo "Missing CODEBERG_BASE_URL"; exit 1; }
-      - test -n "$CODEBERG_REPO" || { echo "Missing CODEBERG_REPO"; exit 1; }
-      - test -n "$CODEBERG_USERNAME" || { echo "Missing CODEBERG_USERNAME"; exit 1; }
-      - test -n "$CODEBERG_TOKEN" || { echo "Missing CODEBERG_TOKEN"; exit 1; }
-      - test -n "$GITHUB_PULL_TOKEN" || { echo "Missing GITHUB_PULL_TOKEN"; exit 1; }
+      - test -n "$CODEBERG_BASE_URL" || { echo " Missing CODEBERG_BASE_URL"; exit 1; }
+      - test -n "$CODEBERG_REPO" || { echo " Missing CODEBERG_REPO"; exit 1; }
+      - test -n "$CODEBERG_USERNAME" || { echo " Missing CODEBERG_USERNAME"; exit 1; }
+      - test -n "$CODEBERG_TOKEN" || { echo " Missing CODEBERG_TOKEN"; exit 1; }
+      - test -n "$GITHUB_PULL_TOKEN" || { echo " Missing GITHUB_PULL_TOKEN"; exit 1; }
       - case "$CODEBERG_BASE_URL" in
           http://*|https://*) ;;
-          *) echo "CODEBERG_BASE_URL must start with http:// or https://"; exit 1 ;;
+          *) echo " CODEBERG_BASE_URL must start with http:// or https://"; exit 1 ;;
         esac
       - echo "Preflight checks passed."
 
@@ -52,19 +59,16 @@ steps:
         from_secret: github_pull_token
     commands:
       - set -e
-      # debug: confirm the token secrets are actually populated, without printing it
-      - echo "CODEBERG_TOKEN length is ${#CODEBERG_TOKEN}"
-      - test -n "$CODEBERG_TOKEN" || { echo "CODEBERG_TOKEN is empty - check the codeberg_token secret exists and is assigned to this repo"; exit 1; }
-      - echo "GITHUB_PULL_TOKEN length is ${#GITHUB_PULL_TOKEN}"
-      - test -n "$GITHUB_PULL_TOKEN" || { echo "GITHUB_PULL_TOKEN is empty - check the github_pull_token secret exists and is assigned to this repo"; exit 1; }
       # the clone step's GitHub credentials don't carry over to this container,
       # so re-authenticate the origin remote before fetching from it
-      - git remote set-url origin "https://x-access-token:${GITHUB_PULL_TOKEN}@github.com/${CI_REPO_OWNER}/${CI_REPO_NAME}.git"
+      - git remote set-url origin "https://x-access-token:$GITHUB_PULL_TOKEN@github.com/$CI_REPO_OWNER/$CI_REPO_NAME.git"
       # make sure we fetch every branch and tag, not just the one that triggered the build
       - git fetch origin '+refs/heads/*:refs/remotes/origin/*'
       - git fetch origin '+refs/tags/*:refs/tags/*'
-      # normalize the base URL and build the push URL with embedded credentials
-      - BASE_URL="${CODEBERG_BASE_URL%/}"
-      - HOST="${BASE_URL#http://}"
-      - HOST="${HOST#https://}"
-      - git push --mirror "https://${CODEBERG_USERNAME}:${CODEBERG_TOKEN}@${HOST}/${CODEBERG_REPO}.git"
+      # normalize the base URL and build the push URL with embedded credentials.
+      # bash's %/ and #http(s):// trims require braces, so those must be $$-escaped.
+      - BASE_URL="$CODEBERG_BASE_URL"
+      - BASE_URL="$${BASE_URL%/}"
+      - HOST="$${BASE_URL#http://}"
+      - HOST="$${HOST#https://}"
+      - git push --mirror "https://$CODEBERG_USERNAME:$CODEBERG_TOKEN@$HOST/$CODEBERG_REPO.git"

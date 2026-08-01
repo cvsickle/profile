@@ -21,4 +21,5 @@ steps:
         from_secret: forgejo_config_json
       dockerfile: Dockerfile
       context: .
+      dry-run: false
       log-level: debug

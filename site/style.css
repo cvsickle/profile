@@ -129,10 +129,10 @@ h1 {
 }
 
 .link-btn .icon {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   flex-shrink: 0;
-  display: flex;
+  object-fit: contain;
 }
 
 .link-btn .icon svg {

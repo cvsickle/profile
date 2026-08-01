@@ -22,6 +22,8 @@ steps:
       CODEBERG_USERNAME: "cvsickle"
       CODEBERG_TOKEN:
         from_secret: codeberg_token
+      GITHUB_PULL_TOKEN:
+        from_secret: github_pull_token
     commands:
       - set -e
       - echo "Running preflight checks..."
@@ -29,6 +31,7 @@ steps:
       - test -n "$CODEBERG_REPO" || { echo "Missing CODEBERG_REPO"; exit 1; }
       - test -n "$CODEBERG_USERNAME" || { echo "Missing CODEBERG_USERNAME"; exit 1; }
       - test -n "$CODEBERG_TOKEN" || { echo "Missing CODEBERG_TOKEN"; exit 1; }
+      - test -n "$GITHUB_PULL_TOKEN" || { echo "Missing GITHUB_PULL_TOKEN"; exit 1; }
       - case "$CODEBERG_BASE_URL" in
           http://*|https://*) ;;
           *) echo "CODEBERG_BASE_URL must start with http:// or https://"; exit 1 ;;
@@ -49,8 +52,8 @@ steps:
       - set -e
       # debug: confirm the token secrets are actually populated, without printing it
       - echo "CODEBERG_TOKEN length is ${#CODEBERG_TOKEN}"
-      - echo "GITHUB_PULL_TOKEN length is ${#GITHUB_PULL_TOKEN}"
       - test -n "$CODEBERG_TOKEN" || { echo "CODEBERG_TOKEN is empty - check the codeberg_token secret exists and is assigned to this repo"; exit 1; }
+      - echo "GITHUB_PULL_TOKEN length is ${#GITHUB_PULL_TOKEN}"
       - test -n "$GITHUB_PULL_TOKEN" || { echo "GITHUB_PULL_TOKEN is empty - check the github_pull_token secret exists and is assigned to this repo"; exit 1; }
       # the clone step's GitHub credentials don't carry over to this container,
       # so re-authenticate the origin remote before fetching from it

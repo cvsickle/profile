@@ -14,36 +14,6 @@ clone:
       tags: true
 
 steps:
-  - name: preflight-check
-    image: alpine:3.20
-    environment:
-      CODEBERG_BASE_URL: "https://codeberg.org/cvsickle"
-      CODEBERG_REPO: "profile"
-      CODEBERG_USERNAME: "cvsickle"
-      CODEBERG_TOKEN:
-        from_secret: codeberg_token
-      GITHUB_PULL_TOKEN:
-        from_secret: github_pull_token
-    commands:
-      - set -e
-      - echo "Provided values..."
-      - echo " CODEBERG_BASE_URL is $${CODEBERG_BASE_URL}"
-      - echo " CODEBERG_REPO is $${CODEBERG_REPO}"
-      - echo " CODEBERG_USERNAME is $${CODEBERG_USERNAME}"
-      - echo " CODEBERG_TOKEN length is $${#CODEBERG_TOKEN}"
-      - echo " GITHUB_PULL_TOKEN length is $${#GITHUB_PULL_TOKEN}"
-      - echo "Running preflight checks..."
-      - test -n "$CODEBERG_BASE_URL" || { echo " Missing CODEBERG_BASE_URL"; exit 1; }
-      - test -n "$CODEBERG_REPO" || { echo " Missing CODEBERG_REPO"; exit 1; }
-      - test -n "$CODEBERG_USERNAME" || { echo " Missing CODEBERG_USERNAME"; exit 1; }
-      - test -n "$CODEBERG_TOKEN" || { echo " Missing CODEBERG_TOKEN"; exit 1; }
-      - test -n "$GITHUB_PULL_TOKEN" || { echo " Missing GITHUB_PULL_TOKEN"; exit 1; }
-      - case "$CODEBERG_BASE_URL" in
-          http://*|https://*) ;;
-          *) echo " CODEBERG_BASE_URL must start with http:// or https://"; exit 1 ;;
-        esac
-      - echo "Preflight checks passed."
-
   - name: sync-to-codeberg
     image: alpine/git
     environment:
@@ -69,3 +39,37 @@ steps:
       - HOST="$${BASE_URL#http://}"
       - HOST="$${HOST#https://}"
       - git push --mirror "https://$CODEBERG_USERNAME:$CODEBERG_TOKEN@$HOST/$CODEBERG_REPO.git"
+
+  - name: failure-check
+    image: alpine:3.20
+    when:
+      - status: failure
+    environment:
+      CODEBERG_BASE_URL: "https://codeberg.org/cvsickle"
+      CODEBERG_REPO: "profile"
+      CODEBERG_USERNAME: "cvsickle"
+      CODEBERG_TOKEN:
+        from_secret: codeberg_token
+      GITHUB_PULL_TOKEN:
+        from_secret: github_pull_token
+    commands:
+      - set +e
+      - echo "Workflow failed, printing debug information..."
+      - echo ""
+      - echo "=== Provided values ==="
+      - echo " CODEBERG_BASE_URL is $${CODEBERG_BASE_URL}"
+      - echo " CODEBERG_REPO is $${CODEBERG_REPO}"
+      - echo " CODEBERG_USERNAME is $${CODEBERG_USERNAME}"
+      - echo " CODEBERG_TOKEN length is $${#CODEBERG_TOKEN}"
+      - echo " GITHUB_PULL_TOKEN length is $${#GITHUB_PULL_TOKEN}"
+      - echo ""
+      - echo "=== Git diagnostics ==="
+      - git remote -v || echo "Failed to list git remotes"
+      - git log --oneline -5 || echo "Failed to show git log"
+      - echo ""
+      - echo "=== Network diagnostics ==="
+      - ping -c 1 codeberg.org || echo "Failed to ping codeberg.org"
+      - echo ""
+      - echo "=== Disk and system info ==="
+      - df -h || echo "Failed to show disk space"
+      - echo "Home directory contents:" && ls -la ~/ || echo "Failed to list home directory"

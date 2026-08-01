@@ -14,12 +14,15 @@ steps:
     image: woodpeckerci/plugin-kaniko:latest
     settings:
       registry: git.cvsickle.com
-      repo: cvsickle/profile
+      repo: git.cvsickle.com/cvsickle/profile
       username: cvsickle
       password:
         from_secret: forgejo_token
       tags:
         - latest
         - ${CI_COMMIT_TAG}
+      build_args:
+      - COMMIT_SHA=${CI_COMMIT_SHA}
+      - COMMIT_AUTHOR_EMAIL=${CI_COMMIT_AUTHOR_EMAIL}
       dockerfile: Dockerfile
       context: .

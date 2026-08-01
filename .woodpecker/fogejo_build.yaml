@@ -11,14 +11,13 @@ clone:
 
 steps:
   - name: build-and-push
-    image: woodpeckerci/plugin-docker-buildx
-    privileged: true
+    image: woodpeckerci/plugin-kaniko:latest
     settings:
       registry: git.cvsickle.com
+      repo: cvsickle/profile
       username: cvsickle
       password:
         from_secret: forgejo_token
-      repo: git.cvsickle.com/cvsickle/profile
       tags:
         - latest
         - ${CI_COMMIT_TAG}

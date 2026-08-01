@@ -1,0 +1,25 @@
+# Build and push Docker image on release
+when:
+  - event: release
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git
+    settings:
+      depth: 0
+      tags: true
+
+steps:
+  - name: build-and-push
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      registry: git.cvsickle.com
+      username: cvsickle
+      password:
+        from_secret: forgejo_token
+      repo: git.cvsickle.com/cvsickle/profile
+      tags:
+        - latest
+        - ${CI_COMMIT_TAG}
+      dockerfile: Dockerfile
+      context: .

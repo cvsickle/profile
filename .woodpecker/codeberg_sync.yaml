@@ -43,16 +43,16 @@ steps:
       CODEBERG_USERNAME: "cvsickle"
       CODEBERG_TOKEN:
         from_secret: codeberg_token
-      GITHUB_TOKEN:
-        from_secret: github_token
+      GITHUB_PULL_TOKEN:
+        from_secret: github_pull_token
     commands:
       - set -e
       # debug: confirm the token secret is actually populated, without printing it
-      - echo "GITHUB_TOKEN length is ${#GITHUB_TOKEN}"
-      - test -n "$GITHUB_TOKEN" || { echo "GITHUB_TOKEN is empty - check the github_token secret exists and is assigned to this repo"; exit 1; }
+      - echo "GITHUB_PULL_TOKEN length is ${#GITHUB_PULL_TOKEN}"
+      - test -n "$GITHUB_PULL_TOKEN" || { echo "GITHUB_PULL_TOKEN is empty - check the github_pull_token secret exists and is assigned to this repo"; exit 1; }
       # the clone step's GitHub credentials don't carry over to this container,
       # so re-authenticate the origin remote before fetching from it
-      - git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${CI_REPO_OWNER}/${CI_REPO_NAME}.git"
+      - git remote set-url origin "https://x-access-token:${GITHUB_PULL_TOKEN}@github.com/${CI_REPO_OWNER}/${CI_REPO_NAME}.git"
       # make sure we fetch every branch and tag, not just the one that triggered the build
       - git fetch origin '+refs/heads/*:refs/remotes/origin/*'
       - git fetch origin '+refs/tags/*:refs/tags/*'

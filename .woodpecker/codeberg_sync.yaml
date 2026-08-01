@@ -18,13 +18,13 @@ steps:
     image: alpine:3.20
     environment:
       CODEBERG_BASE_URL:
-        from_secret: CODEBERG_BASE_URL
+        from_secret: codeberg_base_url
       CODEBERG_REPO:
-        from_secret: CODEBERG_REPO
+        from_secret: codeberg_repo
       CODEBERG_USERNAME:
-        from_secret: CODEBERG_USERNAME
+        from_secret: codeberg_username
       CODEBERG_TOKEN:
-        from_secret: CODEBERG_TOKEN
+        from_secret: codeberg_token
     commands:
       - set -e
       - echo "Running preflight checks..."
@@ -46,13 +46,13 @@ steps:
     image: alpine/git
     environment:
       CODEBERG_BASE_URL:
-        from_secret: CODEBERG_BASE_URL
+        from_secret: codeberg_base_url
       CODEBERG_REPO:
-        from_secret: CODEBERG_REPO
+        from_secret: codeberg_repo
       CODEBERG_USERNAME:
-        from_secret: CODEBERG_USERNAME
+        from_secret: codeberg_username
       CODEBERG_TOKEN:
-        from_secret: CODEBERG_TOKEN
+        from_secret: codeberg_token
     commands:
       - set -e
       # make sure we fetch every branch and tag, not just the one that triggered the build

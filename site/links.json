@@ -7,28 +7,28 @@
       "label": "GitHub",
       "url": "https://github.com/cvsickle",
       "icon": "icons/github.svg",
-      "color": "#f5c2e7"
+      "color": "#a6e3a1"
     },
     {
       "id": "codeberg",
       "label": "Codeberg",
       "url": "https://codeberg.org/cvsickle",
       "icon": "icons/codeberg.png",
-      "color": "#2185d0"
+      "color": "#74c7ec"
     },
     {
       "id": "forgejo",
       "label": "Forgejo",
       "url": "https://git.cvsickle.com/cvsickle",
       "icon": "icons/forgejo.png",
-      "color": "#f2600c"
+      "color": "#fab387"
     },
     {
       "id": "email",
       "label": "Email",
       "url": "mailto:vansicklecorey@gmail.com",
       "icon": "icons/email.png",
-      "color": "#89b4fa"
+      "color": "#f38ba8"
     }
   ]
 }

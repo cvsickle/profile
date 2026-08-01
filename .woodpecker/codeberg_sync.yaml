@@ -26,9 +26,6 @@ steps:
         from_secret: github_pull_token
     commands:
       - set -e
-      # NOTE: ${...} in commands is preprocessed by Woodpecker itself before the
-      # shell runs, so any brace expression meant to be evaluated at runtime
-      # (secrets, string manipulation, etc.) must be escaped with $$.
       - echo "Provided values..."
       - echo " CODEBERG_BASE_URL is $${CODEBERG_BASE_URL}"
       - echo " CODEBERG_REPO is $${CODEBERG_REPO}"

@@ -47,8 +47,10 @@ steps:
         from_secret: github_pull_token
     commands:
       - set -e
-      # debug: confirm the token secret is actually populated, without printing it
+      # debug: confirm the token secrets are actually populated, without printing it
+      - echo "CODEBERG_TOKEN length is ${#CODEBERG_TOKEN}"
       - echo "GITHUB_PULL_TOKEN length is ${#GITHUB_PULL_TOKEN}"
+      - test -n "$CODEBERG_TOKEN" || { echo "CODEBERG_TOKEN is empty - check the codeberg_token secret exists and is assigned to this repo"; exit 1; }
       - test -n "$GITHUB_PULL_TOKEN" || { echo "GITHUB_PULL_TOKEN is empty - check the github_pull_token secret exists and is assigned to this repo"; exit 1; }
       # the clone step's GitHub credentials don't carry over to this container,
       # so re-authenticate the origin remote before fetching from it

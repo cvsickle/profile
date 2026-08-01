@@ -17,12 +17,9 @@ steps:
   - name: preflight-check
     image: alpine:3.20
     environment:
-      CODEBERG_BASE_URL:
-        from_secret: codeberg_base_url
-      CODEBERG_REPO:
-        from_secret: codeberg_repo
-      CODEBERG_USERNAME:
-        from_secret: codeberg_username
+      CODEBERG_BASE_URL: "https://codeberg.org/cvsickle"
+      CODEBERG_REPO: "profile"
+      CODEBERG_USERNAME: "cvsickle"
       CODEBERG_TOKEN:
         from_secret: codeberg_token
     commands:
@@ -36,21 +33,14 @@ steps:
           http://*|https://*) ;;
           *) echo "CODEBERG_BASE_URL must start with http:// or https://"; exit 1 ;;
         esac
-      - case "$CODEBERG_REPO" in
-          */*) ;;
-          *) echo "CODEBERG_REPO must look like owner/repo"; exit 1 ;;
-        esac
       - echo "Preflight checks passed."
 
   - name: sync-to-codeberg
     image: alpine/git
     environment:
-      CODEBERG_BASE_URL:
-        from_secret: codeberg_base_url
-      CODEBERG_REPO:
-        from_secret: codeberg_repo
-      CODEBERG_USERNAME:
-        from_secret: codeberg_username
+      CODEBERG_BASE_URL: "https://codeberg.org/cvsickle"
+      CODEBERG_REPO: "profile"
+      CODEBERG_USERNAME: "cvsickle"
       CODEBERG_TOKEN:
         from_secret: codeberg_token
     commands:

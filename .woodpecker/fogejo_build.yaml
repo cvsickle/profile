@@ -19,8 +19,8 @@ steps:
       #   - "git.cvsickle.com/cvsickle/profile:${CI_COMMIT_TAG}"
       # docker_config_json:
       #   from_secret: forgejo_config_json
-      registry: "https://git.cvsickle.com/cvsickle"
-      repo: profile
+      registry: git.cvsickle.com
+      repo: git.cvsickle.com/cvsickle/profile
       tags:
         - latest
         - ${CI_COMMIT_TAG}

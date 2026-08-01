@@ -43,8 +43,13 @@ steps:
       CODEBERG_USERNAME: "cvsickle"
       CODEBERG_TOKEN:
         from_secret: codeberg_token
+      GITHUB_TOKEN:
+        from_secret: github_token
     commands:
       - set -e
+      # the clone step's GitHub credentials don't carry over to this container,
+      # so re-authenticate the origin remote before fetching from it
+      - git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${CI_REPO_OWNER}/${CI_REPO_NAME}.git"
       # make sure we fetch every branch and tag, not just the one that triggered the build
       - git fetch origin '+refs/heads/*:refs/remotes/origin/*'
       - git fetch origin '+refs/tags/*:refs/tags/*'

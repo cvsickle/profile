@@ -19,9 +19,9 @@ steps:
       tags:
         - latest
         - ${CI_COMMIT_TAG}
-      username: woodpecker
+      username: cvsickle
       password:
-        from_secret: forgejo_publish_token
+        from_secret: forgejo_token
       dockerfile: Dockerfile
       context: .
       dry-run: false

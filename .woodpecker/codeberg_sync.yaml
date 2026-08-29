@@ -5,12 +5,7 @@ when:
   - event: manual
   - event: cron
 
-clone:
-  git:
-    image: woodpeckerci/plugin-git
-    settings:
-      depth: 0
-      tags: true
+skip_clone: true
 
 steps:
   - name: sync-to-codeberg
@@ -25,19 +20,17 @@ steps:
         from_secret: github_pull_token
     commands:
       - set -e
-      # the clone step's GitHub credentials don't carry over to this container,
-      # so re-authenticate the origin remote before fetching from it
-      - git remote set-url origin "https://x-access-token:$GITHUB_PULL_TOKEN@github.com/$CI_REPO_OWNER/$CI_REPO_NAME.git"
-      # make sure we fetch every branch and tag, not just the one that triggered the build
-      - git fetch origin '+refs/heads/*:refs/remotes/origin/*'
-      - git fetch origin '+refs/tags/*:refs/tags/*'
-      # normalize the base URL and build the push URL with embedded credentials.
+      # normalize the Codeberg base URL and build the push URL with embedded credentials.
       # bash's %/ and #http(s):// trims require braces, so those must be $$-escaped.
       - BASE_URL="$CODEBERG_BASE_URL"
       - BASE_URL="$${BASE_URL%/}"
       - HOST="$${BASE_URL#http://}"
       - HOST="$${HOST#https://}"
-      - git push --mirror "https://$CODEBERG_USERNAME:$CODEBERG_TOKEN@$HOST/$CODEBERG_REPO.git"
+      # clone a true GitHub mirror so Codeberg gets every branch and tag, not just the
+      # triggering ref. --mirror includes refs/heads/* and refs/tags/* without inventing
+      # refs/remotes/origin/* that a later push --mirror would try to create or prune.
+      - git clone --mirror "https://x-access-token:$GITHUB_PULL_TOKEN@github.com/$CI_REPO_OWNER/$CI_REPO_NAME.git" /tmp/mirror.git
+      - git -C /tmp/mirror.git push --mirror "https://$CODEBERG_USERNAME:$CODEBERG_TOKEN@$HOST/$CODEBERG_REPO.git"
 
   - name: failure-check
     image: alpine:3.20

@@ -134,6 +134,10 @@ h1 {
 }
 
 .link-btn .label {
+  /* Match Codeberg's width so icons stay aligned and shorter
+     labels center within that same text column. */
+  width: 10ch;
+  flex-shrink: 0;
   text-align: center;
 }
 

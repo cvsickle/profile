@@ -27,8 +27,8 @@
       "id": "email",
       "label": "Email",
       "url": "mailto:mail@cvsickle.com",
-      "icon": "icons/email.png",
-      "color": "#f38ba8"
+      "icon": "icons/email.svg",
+      "color": "#cba6f7"
     }
   ]
 }

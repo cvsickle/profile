@@ -58,6 +58,14 @@ body {
   border: 3px solid var(--mauve);
   box-shadow: 0 0 0 6px var(--surface0), 0 8px 24px rgba(0,0,0,0.5);
   margin-bottom: 1.25rem;
+  transition: transform 0.22s cubic-bezier(.2,.8,.2,1),
+              box-shadow 0.22s ease;
+}
+
+.avatar:hover,
+.avatar:focus-visible {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 6px var(--surface0), 0 0 28px 12px #b4befe;
 }
 
 h1 {

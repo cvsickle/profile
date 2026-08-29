@@ -24,11 +24,18 @@
       "color": "#fab387"
     },
     {
+      "id": "signal",
+      "label": "Signal",
+      "url": "https://signal.me/#eu/T0B9t93uvALiCx89lLdkdmScJOFvGy7MR8EsYQFAiCrtb0IpnDpHpYpKjiUxt9AT",
+      "icon": "icons/signal.svg",
+      "color": "#89b4fa"
+    },
+    {
       "id": "email",
       "label": "Email",
       "url": "mailto:mail@cvsickle.com",
-      "icon": "icons/email.png",
-      "color": "#f38ba8"
+      "icon": "icons/email.svg",
+      "color": "#cba6f7"
     }
   ]
 }
